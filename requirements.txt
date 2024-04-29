@@ -4,5 +4,5 @@ pydantic==2.5.3
 uvicorn==0.20.0
 requests==2.31.0
 r-useragent==1.1
-paddlepaddle==2.5.2
+paddlepaddle==2.6.1
 paddleocr==2.7.3
