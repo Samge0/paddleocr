@@ -17,8 +17,8 @@ paddleocr==2.7.3
 
 ### 使用说明
 
-    - 复制`config-dev.json`文件为`config.json`并填写自定义的`access_token`；
-    - 配置`http-client.env.json`后在`test_main.http`中进行接口调试，其中`access_token`的值跟config.json中的一致；
+- 复制`config-dev.json`文件为`config.json`并填写自定义的`access_token`；
+- 配置`http-client.env.json`后在`test_main.http`中进行接口调试，其中`access_token`的值跟config.json中的一致；
 
 ### docker方式运行
 
