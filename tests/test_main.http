@@ -1,0 +1,15 @@
+# Test your FastAPI endpoints
+
+### 测试 ocr
+
+POST {{url}}/api/ocr
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "lst": [
+    "{{img_value}}"
+  ],
+  "need_kv": {{need_kv}}
+}
+
