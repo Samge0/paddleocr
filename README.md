@@ -22,7 +22,8 @@ paddleocr==2.7.3
 
 ### docker方式运行
 
-[点击这里查看docker说明](docker/README.md)
+[点击这里查看docker说明-cpu版](docker/README_cpu.md)
+[点击这里查看docker说明-gpu版](docker/README_gpu.md)
 
 
 ### 本地源码运行
@@ -30,6 +31,16 @@ paddleocr==2.7.3
 - 安装依赖
 ```shell
 pip install -r requirements.txt
+```
+
+安装cpu版：
+```shell
+pip install paddlepaddle==2.5.2
+```
+
+安装gpu版（需要有cuda环境）：
+```shell
+pip install paddlepaddle-gpu==2.5.2
 ```
 
 - 运行

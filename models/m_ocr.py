@@ -10,9 +10,10 @@ from pydantic import BaseModel
 
 class ImgDownloadModel(BaseModel):
     """图片下载参数"""
-    headers: Optional[dict] = None    # 下载图片需要的自定义头 => {"a1":"xxx", "a2":"xxx"}
-    proxy_url: Optional[str] = None             # 代理ip
-    timeout: Optional[int] = 20                 # 下载超时时间
+    headers: Optional[dict] = None    # 下载图片需要的自定义header => {"a1":"xxx", "a2":"xxx"}
+    cookies: Optional[dict] = None    # 下载图片需要的自定义cookie => {"a1":"xxx"}，可选，如果headers中配置Cookie字段的话，该配置会被忽略
+    proxy_url: Optional[str] = None   # 代理ip
+    timeout: Optional[int] = 20       # 下载超时时间
 
 
 class OcrRequest(BaseModel):

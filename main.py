@@ -37,11 +37,18 @@ async def ocr_post(request: OcrRequest):
     # 遍历参数列表，解析图片中的数字并返回
     result_list = []
     for txt in lst:
+        if not txt:
+            continue
+
         temp_img_path = u_img.save_img(txt, request.option)
+        if not u_file.exists(temp_img_path):
+            continue
+
         result = u_ocr.inference(temp_img_path)
         u_file.remove(temp_img_path)  # 处理完毕后删除临时图片
         if not result:
             continue
+
         if request.need_kv:
             result_list.append({
                 "key": txt,

@@ -5,6 +5,7 @@
 # describe：
 import base64
 import hashlib
+import os
 from io import BytesIO
 
 import requests
@@ -30,7 +31,6 @@ def save_img(value, option: ImgDownloadModel = None) -> str:
 # 下载图片
 def download_image(url, option: ImgDownloadModel = None) -> str:
     try:
-        img_path = _get_img_path(url)
 
         if not option:
             option = ImgDownloadModel()
@@ -40,21 +40,39 @@ def download_image(url, option: ImgDownloadModel = None) -> str:
         proxies = {"http": proxy_url, "https": proxy_url}
 
         # 组装headers
-        headers = {'User-Agent': u_ua.random_one()}
-        for k, v in (option.headers or {}).items():
-            headers[k] = v
+        headers = option.headers or {}
+        if not headers.get('User-Agent'):
+            headers['User-Agent'] = u_ua.random_one()
+
+        # 组装cookies，如果headers中有Cookie字段【优先级更高】，则该cookies不会生效
+        cookies = option.cookies or {}
 
         # 下载超时时间
         timeout = option.timeout or 20
 
-        response = requests.get(url, timeout=timeout, proxies=proxies, headers=headers)
+        response = requests.get(url, timeout=timeout, proxies=proxies, headers=headers, cookies=cookies)
         if response.status_code == 200:
+
+            try:
+                image = Image.open(BytesIO(response.content))
+                image.verify()  # 这会检查图片文件的合法性
+                extension = image.format.lower()
+            except (IOError, SyntaxError) as e:
+                print(f"图片下载后验证失败: {e}\nurl={url}\nproxies={proxies}\nheaders={headers}\ncookies={cookies}\ntimeout={timeout}")
+                return None
+
+            img_path = _get_img_path(url, extension)
             with open(img_path, 'wb') as f:
                 f.write(response.content)
+
             return img_path
+
         else:
+            print(f"图片下载状态码（{response.status_code}）不为200\nurl={url}\nproxies={proxies}\nheaders={headers}\ncookies={cookies}\ntimeout={timeout}")
             return None
+
     except Exception as e:
+        print(f"图片下载异常：{e}")
         return None
 
 
@@ -73,13 +91,14 @@ def save_base64_to_image(base64_str):
         image.save(img_path)
         return img_path
     except Exception as e:
+        print(f"save_base64_to_image异常：{e}")
         return None
 
 
 # 根据 url/base64的字符 转为目标保存路径
-def _get_img_path(value) -> str:
+def _get_img_path(value, extension: str = "png") -> str:
     u_file.makedirs(TEMP_IMG_DIR)
-    return f"{TEMP_IMG_DIR}/{_gen_md5(value)}.jpg"
+    return f"{TEMP_IMG_DIR}/{_gen_md5(value)}.{extension}"
 
 
 # 生成md5

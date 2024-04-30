@@ -1,5 +1,5 @@
 # 设置基础镜像
-FROM python:3.11-slim-buster
+FROM samge/paddlenlp:cuda117-py39-paddlepaddle242-paddlenlp252
 
 ARG PROXY
 ENV http_proxy=${PROXY} https_proxy=${PROXY}
@@ -10,13 +10,13 @@ WORKDIR /app
 # 复制当前目录中的所有文件到 /app
 COPY requirements.txt requirements.txt
 
+RUN pip install --no-cache-dir -r requirements.txt
+
 RUN apt-get update && apt-get install -y \
     libgomp1 \
     libgl1-mesa-glx \
     libglib2.0-0 \
     build-essential
-
-RUN pip install --no-cache-dir -r requirements.txt
 
 # 清除不再使用的依赖和缓存
 RUN apt-get autoremove -y && \
