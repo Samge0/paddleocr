@@ -1,6 +1,9 @@
 ## ocr api
 一个简易的ocr识别图片中数字的api接口 + 简易的token校验。
 
+
+> 🌐 **[在线宣传页](https://samge0.github.io/paddleocr/)** — 可视化了解功能特性与工作流程
+
 ### 当前环境依赖说明
 
 ```text

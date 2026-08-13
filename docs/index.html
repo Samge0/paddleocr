@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR API - 智能数字识别接口</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans SC', 'Inter', 'sans-serif'],
+                        display: ['Manrope', 'Noto Sans SC', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            400: '#e0e357',
+                            500: '#d6d841',
+                            600: '#c4c638',
+                            700: '#a8a930',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8f9f4 0%, #f5f6f0 50%, #f2f3ec 100%);
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(214, 216, 65, 0.15);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #d6d841 0%, #c4c638 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .icon-gradient {
+            background: linear-gradient(135deg, #d6d841 0%, #c4c638 100%);
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(214, 216, 65, 0.1) 0%, rgba(196, 198, 56, 0.05) 100%);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(214, 216, 65, 0.15);
+        }
+
+        .nav-blur {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="text-gray-700">
+    <!-- Top Navigation -->
+    <nav class="nav-blur fixed top-0 left-0 right-0 z-50 border-b border-gray-200/50">
+        <div class="max-w-6xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <img src="icon.png" alt="OCR API" class="w-9 h-9">
+                    <span class="text-xl font-semibold text-gray-800">OCR API</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-gray-600 hover:text-white transition-colors">功能特性</a>
+                    <a href="#how-it-works" class="text-gray-600 hover:text-white transition-colors">工作原理</a>
+                    <a href="#faq" class="text-gray-600 hover:text-white transition-colors">常见问题</a>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <a href="#" class="hidden sm:flex items-center text-gray-600 hover:text-gray-800 transition-colors">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                        GitHub
+                    </a>
+                    <a href="#get-started" class="bg-brand-500 hover:bg-brand-600 text-white px-5 py-2.5 rounded-lg font-medium transition-colors shadow-sm">
+                        快速开始
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient pt-32 pb-20 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="inline-flex items-center px-4 py-2 rounded-full glass-card mb-8">
+                <span class="w-2 h-2 bg-brand-500 rounded-full mr-2"></span>
+                <span class="text-sm text-gray-600">基于 PaddleOCR 的高精度识别</span>
+            </div>
+            
+            <h1 class="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+                智能数字识别<br>
+                <span class="gradient-text">API 接口</span>
+            </h1>
+            
+            <p class="text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+                一个简易的 OCR 识别图片中数字的 API 接口，配备简易的 token 校验。
+                支持 CPU 和 GPU 部署，开箱即用。
+            </p>
+            
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#get-started" class="w-full sm:w-auto icon-gradient text-white px-8 py-4 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all text-center">
+                    立即开始使用
+                </a>
+                <a href="https://github.com" class="w-full sm:w-auto glass-card text-gray-700 px-8 py-4 rounded-lg font-semibold hover:bg-white transition-all text-center">
+                    查看文档
+                </a>
+            </div>
+            
+            <div class="mt-12 flex items-center justify-center space-x-8 text-sm text-gray-500">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    Python 3.11+
+                </div>
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    Docker 支持
+                </div>
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    GPU 加速
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">功能特性</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">强大而简洁的 OCR API，为您的应用提供智能数字识别能力</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="glass-card rounded-2xl p-8 feature-card transition-all duration-300">
+                    <div class="icon-gradient w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">高精度识别</h3>
+                    <p class="text-gray-600 leading-relaxed">基于 PaddleOCR 深度学习模型，专门优化数字识别场景，识别准确率高</p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="glass-card rounded-2xl p-8 feature-card transition-all duration-300">
+                    <div class="icon-gradient w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Token 校验</h3>
+                    <p class="text-gray-600 leading-relaxed">内置简易的 access_token 校验机制，保护 API 接口安全，防止未授权访问</p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="glass-card rounded-2xl p-8 feature-card transition-all duration-300">
+                    <div class="icon-gradient w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">灵活部署</h3>
+                    <p class="text-gray-600 leading-relaxed">支持 Docker 容器化部署和本地源码运行，CPU 和 GPU 版本可选</p>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="glass-card rounded-2xl p-8 feature-card transition-all duration-300">
+                    <div class="icon-gradient w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">简洁 API</h3>
+                    <p class="text-gray-600 leading-relaxed">RESTful API 设计，易于集成到现有系统，支持 HTTP 调试工具测试</p>
+                </div>
+                
+                <!-- Feature 5 -->
+                <div class="glass-card rounded-2xl p-8 feature-card transition-all duration-300">
+                    <div class="icon-gradient w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">版本稳定</h3>
+                    <p class="text-gray-600 leading-relaxed">基于 PaddlePaddle 2.5.2 稳定版本，确保兼容性和可靠性，避免版本冲突</p>
+                </div>
+                
+                <!-- Feature 6 -->
+                <div class="glass-card rounded-2xl p-8 feature-card transition-all duration-300">
+                    <div class="icon-gradient w-14 h-14 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">配置灵活</h3>
+                    <p class="text-gray-600 leading-relaxed">通过 JSON 配置文件轻松管理 access_token，支持开发和生产环境分离</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-20 px-6 hero-gradient">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">工作原理</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">三步完成集成，快速开始使用 OCR 识别能力</p>
+            </div>
+            
+            <div class="space-y-8">
+                <!-- Step 1 -->
+                <div class="glass-card rounded-2xl p-8">
+                    <div class="flex items-start space-x-4">
+                        <div class="icon-gradient w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0">
+                            <span class="text-white font-bold">1</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">配置认证</h3>
+                            <p class="text-gray-600 mb-4">复制 <code class="bg-gray-100 px-2 py-1 rounded text-sm">config-dev.json</code> 为 <code class="bg-gray-100 px-2 py-1 rounded text-sm">config.json</code> 并填写自定义的 access_token</p>
+                            <div class="bg-gray-900 rounded-lg p-4 text-sm text-gray-100">
+                                <span class="text-gray-400"># 配置文件示例</span><br>
+                                <span class="text-green-400">{</span><br>
+                                &nbsp;&nbsp;<span class="text-brand-400">"access_token"</span>: <span class="text-yellow-400">"your-custom-token"</span><br>
+                                <span class="text-green-400">}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 2 -->
+                <div class="glass-card rounded-2xl p-8">
+                    <div class="flex items-start space-x-4">
+                        <div class="icon-gradient w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0">
+                            <span class="text-white font-bold">2</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">安装依赖</h3>
+                            <p class="text-gray-600 mb-4">选择适合您的部署方式安装依赖</p>
+                            
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-white rounded-lg p-4">
+                                    <h4 class="font-semibold text-gray-800 mb-2">CPU 版本</h4>
+                                    <code class="text-sm text-gray-600 block bg-gray-50 p-2 rounded">
+                                        pip install paddlepaddle==2.5.2
+                                    </code>
+                                </div>
+                                <div class="bg-white rounded-lg p-4">
+                                    <h4 class="font-semibold text-gray-800 mb-2">GPU 版本</h4>
+                                    <code class="text-sm text-gray-600 block bg-gray-50 p-2 rounded">
+                                        pip install paddlepaddle-gpu==2.5.2
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 3 -->
+                <div class="glass-card rounded-2xl p-8">
+                    <div class="flex items-start space-x-4">
+                        <div class="icon-gradient w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0">
+                            <span class="text-white font-bold">3</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">启动服务</h3>
+                            <p class="text-gray-600 mb-4">启动服务并通过 HTTP 客户端测试 API</p>
+                            
+                            <div class="bg-gray-900 rounded-lg p-4 text-sm text-gray-100">
+                                <span class="text-gray-400"># 启动服务</span><br>
+                                <span class="text-yellow-400">python main.py</span><br><br>
+                                <span class="text-gray-400"># 或使用 uvicorn</span><br>
+                                <span class="text-yellow-400">uvicorn main:app --reload --host 0.0.0.0 --port 8000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-20 px-6">
+        <div class="max-w-3xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">常见问题</h2>
+                <p class="text-gray-600">快速找到您关心的问题答案</p>
+            </div>
+            
+            <div class="space-y-4">
+                <details class="glass-card rounded-xl overflow-hidden group">
+                    <summary class="p-6 cursor-pointer font-semibold text-gray-800 flex items-center justify-between">
+                        为什么推荐使用 PaddlePaddle 2.5.2 版本？
+                        <svg class="w-5 h-5 transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </summary>
+                    <div class="px-6 pb-6 text-gray-600">
+                        经过测试，PaddlePaddle 2.5.2 版本在本地和 Docker 环境中都能稳定运行。更高版本（如 2.6.1）可能在本地正常运行，但在 Docker 打包后出现版本兼容问题。为了确保部署的稳定性，建议使用指定版本。
+                    </div>
+                </details>
+                
+                <details class="glass-card rounded-xl overflow-hidden group">
+                    <summary class="p-6 cursor-pointer font-semibold text-gray-800 flex items-center justify-between">
+                        如何使用 Docker 部署？
+                        <svg class="w-5 h-5 transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </summary>
+                    <div class="px-6 pb-6 text-gray-600">
+                        项目支持 Docker CPU 和 GPU 版本部署。详细说明请参考：
+                        <ul class="mt-2 space-y-1">
+                            <li>• <a href="#" class="text-white hover:underline">Docker CPU 版本说明</a></li>
+                            <li>• <a href="#" class="text-white hover:underline">Docker GPU 版本说明</a></li>
+                        </ul>
+                    </div>
+                </details>
+                
+                <details class="glass-card rounded-xl overflow-hidden group">
+                    <summary class="p-6 cursor-pointer font-semibold text-gray-800 flex items-center justify-between">
+                        如何测试 API 接口？
+                        <svg class="w-5 h-5 transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </summary>
+                    <div class="px-6 pb-6 text-gray-600">
+                        配置 <code>http-client.env.json</code> 后，可以在 <code>test_main.http</code> 文件中进行接口调试。确保 access_token 的值与 config.json 中配置的一致。
+                    </div>
+                </details>
+                
+                <details class="glass-card rounded-xl overflow-hidden group">
+                    <summary class="p-6 cursor-pointer font-semibold text-gray-800 flex items-center justify-between">
+                        GPU 版本有什么要求？
+                        <svg class="w-5 h-5 transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </summary>
+                    <div class="px-6 pb-6 text-gray-600">
+                        使用 GPU 版本需要系统已安装 CUDA 环境。安装时使用 <code>paddlepaddle-gpu==2.5.2</code> 包，该版本会利用您的 GPU 资源进行加速计算，提高识别速度。
+                    </div>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="get-started" class="py-20 px-6">
+        <div class="max-w-4xl mx-auto">
+            <div class="glass-card rounded-3xl p-12 text-center relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 icon-gradient opacity-10 rounded-full blur-3xl"></div>
+                <div class="absolute bottom-0 left-0 w-48 h-48 icon-gradient opacity-10 rounded-full blur-2xl"></div>
+                
+                <div class="relative z-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                        准备好开始了吗？
+                    </h2>
+                    <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+                        立即体验智能 OCR 数字识别，为您的应用添加强大的识别能力
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <button class="w-full sm:w-auto icon-gradient text-white px-8 py-4 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all">
+                            克隆项目
+                        </button>
+                        <a href="#" class="w-full sm:w-auto glass-card text-gray-700 px-8 py-4 rounded-lg font-semibold hover:bg-white transition-all text-center">
+                            查看完整文档
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-200 py-12 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
+                <div class="flex items-center space-x-3">
+                    <img src="icon.png" alt="OCR API" class="w-8 h-8">
+                    <span class="text-lg font-semibold text-gray-800">OCR API</span>
+                </div>
+                
+                <div class="flex items-center space-x-6">
+                    <a href="#" class="text-gray-500 hover:text-gray-700 transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-500 hover:text-gray-700 transition-colors">
+                        文档
+                    </a>
+                </div>
+                
+                <div class="text-sm text-gray-500">
+                    © 2024 OCR API. MIT License
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
